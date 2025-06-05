@@ -173,6 +173,7 @@ int main(int argc, char **argv) {
       show_snapshot = true;
       break;
     case 'S':
+        fprintf(stderr, "Picked snapshot v2!");
       show_snapshot_v2 = true;
       break;
     case ':':
@@ -183,7 +184,7 @@ int main(int argc, char **argv) {
                         "representing tenths of seconds\n");
         break;
       default:
-        fprintf(stderr, "Unhandled error in getopt missing argument\n");
+        fprintf(stderr, "Unhandled error in getopt missing argument (%s)\n", optopt);
         exit(EXIT_FAILURE);
         break;
       }
