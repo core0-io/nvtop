@@ -85,12 +85,12 @@ void print_snapshot_v2(struct list_head *devices) {
       printf("%s\"%s\": %u,\n", indent_level_four, mem_clock_field, device->dynamic_info.mem_clock_speed);
     }
 
-    // GPU Temperature, Celsius only for FFWD
+    // GPU Temperature, Celsius only
     if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, gpu_temp)) {
       printf("%s\"%s\": %u,\n", indent_level_four, temp_field, device->dynamic_info.gpu_temp);
     }
 
-    // Fan speed, modified for FFWD
+    // Fan speed, modified
     if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, fan_speed)) {
       printf("%s\"%s\": %u,\n", indent_level_four, fan_field_pct,
              device->dynamic_info.fan_speed > 100 ? 100 : device->dynamic_info.fan_speed);
@@ -103,27 +103,27 @@ void print_snapshot_v2(struct list_head *devices) {
       printf("%s\"%s\": true,\n", indent_level_four, cpu_fan_field);
     }
 
-    // Memory used, new for FFWD
+    // Memory used, new
     if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, used_memory)) {
       printf("%s\"%s\": %u,\n", indent_level_four, mem_used_field, device->dynamic_info.used_memory);
     }
-    // Memory free, new for FFWD
+    // Memory free, new
     if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, free_memory)) {
       printf("%s\"%s\": %u,\n", indent_level_four, mem_free_field, device->dynamic_info.used_memory);
     }
-    // Memory PCIe ingress, new for FFWD
+    // Memory PCIe ingress, new
     if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, pcie_rx)) {
       printf("%s\"%s\": %u,\n", indent_level_four, pcie_ingress_field, device->dynamic_info.pcie_rx);
     }
-    // Memory PCIe egress, new for FFWD
+    // Memory PCIe egress, new
     if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, pcie_tx)) {
       printf("%s\"%s\": %u,\n", indent_level_four, pcie_egress_field, device->dynamic_info.pcie_tx);
     }
-    // Encoder util, new for FFWD
+    // Encoder util, new
     if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, encoder_rate)) {
       printf("%s\"%s\": %u,\n", indent_level_four, encoder_util_field, device->dynamic_info.encoder_rate);
     }
-    // Decoder util, new for FFWD
+    // Decoder util, new
     if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, decoder_rate)) {
       printf("%s\"%s\": %u,\n", indent_level_four, decoder_util_field, device->dynamic_info.decoder_rate);
     }
