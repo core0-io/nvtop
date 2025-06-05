@@ -69,8 +69,8 @@ static const char helpstring[] = "Available options:\n"
                                  "(default 30s, negative = always on screen)\n"
                                  "  -h --help         : Print help and exit\n"
                                  "  -s --snapshot     : Output the current gpu stats without ncurses"
-                                 "  -S --snapshot2    : Output snapshot v2"
-                                 "(useful for scripting)\n";
+                                 "(useful for scripting)\n"
+                                 "  -S --snapshot2    : Output snapshot v2";
 
 static const char versionString[] = "nvtop version " NVTOP_VERSION_STRING;
 

@@ -53,6 +53,7 @@ void print_snapshot_v2(struct list_head *devices) {
     const char *indent_level_four = "   ";
 
     const char *device_name_field = "device_name";
+    const char *pdev_field = "pdev"; // e.g. 0000:01:00.0
     const char *gpu_clock_field = "gpu_clock";
     const char *mem_clock_field = "mem_clock";
     const char *temp_field = "temp";
@@ -65,7 +66,7 @@ void print_snapshot_v2(struct list_head *devices) {
     const char *mem_used_field = "mem_used";
     const char *mem_free_field = "mem_free";
     const char *pcie_ingress_field = "pcie_ingress_rate"; // KB/s, traffic into the GPU
-    const char *pcie_egress_field = "pcie_egress_rate"; // KB/s, traffic out of the GPU
+    const char *pcie_egress_field = "pcie_egress_rate";   // KB/s, traffic out of the GPU
     const char *encoder_util_field = "encoder_util";
     const char *decoder_util_field = "decoder_util";
 
@@ -75,6 +76,12 @@ void print_snapshot_v2(struct list_head *devices) {
     if (GPUINFO_STATIC_FIELD_VALID(&device->static_info, device_name)) {
       printf("%s\"%s\": \"%s\",\n", indent_level_four, device_name_field, device->static_info.device_name);
     }
+
+    // PDev
+    if (&device->pdev && strlen(&device->pdev) > 0) {
+      printf("%s\"%s\": \"%s\",\n", indent_level_four, pdev_field, &device->pdev);
+    }
+
     // GPU Clock Speed
     if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, gpu_clock_speed)) {
       printf("%s\"%s\": %u,\n", indent_level_four, gpu_clock_field, device->dynamic_info.gpu_clock_speed);
@@ -141,7 +148,7 @@ void print_snapshot_v2(struct list_head *devices) {
     if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, mem_util_rate)) {
       printf("%s\"%s\": %u\n", indent_level_four, mem_util_field, device->dynamic_info.mem_util_rate);
     } else {
-      printf("%s\"%s\": null\n", indent_level_four, mem_util_field); //avoid trailing comma
+      printf("%s\"%s\": null\n", indent_level_four, mem_util_field); // avoid trailing comma
     }
 
     if (device->list.next == devices)
