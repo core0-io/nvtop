@@ -70,7 +70,8 @@ static const char helpstring[] = "Available options:\n"
                                  "  -h --help         : Print help and exit\n"
                                  "  -s --snapshot     : Output the current gpu stats without ncurses"
                                  "(useful for scripting)\n"
-                                 "  -S --snapshot2    : Output snapshot v2";
+                                 "  -S --snapshot2    : Output snapshot v2"
+                                 "\n";
 
 static const char versionString[] = "nvtop version " NVTOP_VERSION_STRING;
 
@@ -92,7 +93,7 @@ static const struct option long_opts[] = {
     {0, 0, 0, 0},
 };
 
-static const char opts[] = "hvd:c:CfE:pPris";
+static const char opts[] = "hvd:c:CfE:pPrisS";
 
 int main(int argc, char **argv) {
   (void)setlocale(LC_CTYPE, "");
@@ -173,7 +174,6 @@ int main(int argc, char **argv) {
       show_snapshot = true;
       break;
     case 'S':
-        fprintf(stderr, "Picked snapshot v2!");
       show_snapshot_v2 = true;
       break;
     case ':':
