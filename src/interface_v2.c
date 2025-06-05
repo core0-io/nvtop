@@ -19,7 +19,7 @@
  *
  */
 
-#include "nvtop/ffwd_interface.h"
+#include "nvtop/interface_v2.h"
 #include "nvtop/common.h"
 #include "nvtop/extract_gpuinfo_common.h"
 #include "nvtop/interface_common.h"
@@ -42,7 +42,7 @@
 #include <tgmath.h>
 #include <unistd.h>
 
-void print_ffwd_json(struct list_head *devices, bool use_fahrenheit_option) {
+void print_snapshot_v2(struct list_head *devices) {
   gpuinfo_populate_static_infos(devices);
   gpuinfo_refresh_dynamic_info(devices);
   struct gpu_info *device;

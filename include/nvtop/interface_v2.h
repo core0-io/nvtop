@@ -26,6 +26,6 @@
 
 #include <stdbool.h>
 
-void print_ffwd_json(struct list_head *devices, bool use_fahrenheit_option);
+void print_snapshot_v2(struct list_head *devices);
 
 #endif // INTERFACE_H_
