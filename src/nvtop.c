@@ -184,7 +184,7 @@ int main(int argc, char **argv) {
                         "representing tenths of seconds\n");
         break;
       default:
-        fprintf(stderr, "Unhandled error in getopt missing argument (%s)\n", optopt);
+        fprintf(stderr, "Unhandled error in getopt missing argument\n");
         exit(EXIT_FAILURE);
         break;
       }
