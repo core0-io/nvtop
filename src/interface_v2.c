@@ -78,8 +78,8 @@ void print_snapshot_v2(struct list_head *devices) {
     }
 
     // PDev
-    if (&device->pdev && strlen(&device->pdev) > 0) {
-      printf("%s\"%s\": \"%s\",\n", indent_level_four, pdev_field, &device->pdev);
+    if (&device->pdev && strlen(device->pdev) > 0) {
+      printf("%s\"%s\": \"%s\",\n", indent_level_four, pdev_field, device->pdev);
     }
 
     // GPU Clock Speed
@@ -112,11 +112,11 @@ void print_snapshot_v2(struct list_head *devices) {
 
     // Memory used, new
     if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, used_memory)) {
-      printf("%s\"%s\": %u,\n", indent_level_four, mem_used_field, device->dynamic_info.used_memory);
+      printf("%s\"%s\": %llu,\n", indent_level_four, mem_used_field, device->dynamic_info.used_memory);
     }
     // Memory free, new
     if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, free_memory)) {
-      printf("%s\"%s\": %u,\n", indent_level_four, mem_free_field, device->dynamic_info.used_memory);
+      printf("%s\"%s\": %llu,\n", indent_level_four, mem_free_field, device->dynamic_info.used_memory);
     }
     // Memory PCIe ingress, new
     if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, pcie_rx)) {

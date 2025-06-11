@@ -19,8 +19,8 @@
  *
  */
 
-#ifndef INTERFACE_H_
-#define INTERFACE_H_
+#ifndef INTERFACE_V2_H_
+#define INTERFACE_V2_H_
 
 #include "nvtop/interface_options.h"
 
