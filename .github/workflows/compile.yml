@@ -6,11 +6,16 @@ on:
 
 jobs:
   release:
+    runs-on: ubuntu-latest
     if: github.ref_name == 'master' && github.event_name == 'push'
     steps:
-      - gh release create latest --target master
+      - name: Create release
+        run: gh release create latest --target master
   build:
     runs-on: ${{ matrix.os }}
+
+    if: always()
+    needs: [release]
 
     strategy:
       fail-fast: false
