@@ -60,4 +60,4 @@ jobs:
         GH_TOKEN: ${{ github.token }}
       run: |
         mv "$PWD/build/install/usr/local/bin/nvtop" nvtop-${{matrix.os}}
-        gh release upload latest nvtop-${{matrix.os}} --clobber 
+        gh release upload latest nvtop-${{runner.os}}-${{runner.arch}} --clobber
