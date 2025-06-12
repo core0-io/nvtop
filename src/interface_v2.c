@@ -118,7 +118,7 @@ void print_snapshot_v2(struct list_head *devices) {
     }
     // Memory free, new
     if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, free_memory)) {
-      printf("%s\"%s\": %llu,\n", indent_level_four, mem_free_field, device->dynamic_info.used_memory);
+      printf("%s\"%s\": %llu,\n", indent_level_four, mem_free_field, device->dynamic_info.free_memory);
     }
     // Memory PCIe ingress, new
     if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, pcie_rx)) {
