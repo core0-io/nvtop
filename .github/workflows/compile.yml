@@ -12,9 +12,6 @@ jobs:
   build:
     runs-on: ${{ matrix.os }}
 
-    if: always()
-    needs: [release]
-
     strategy:
       fail-fast: false
 
