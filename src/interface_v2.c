@@ -78,7 +78,7 @@ void print_snapshot_v2(struct list_head *devices) {
     }
 
     // PDev
-    if (&device->pdev && strlen(device->pdev) > 0) {
+    if (strlen(device->pdev) > 0) {
       printf("%s\"%s\": \"%s\",\n", indent_level_four, pdev_field, device->pdev);
     }
 
