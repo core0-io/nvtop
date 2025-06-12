@@ -8,6 +8,7 @@ configure_file(
 add_executable(nvtop
   nvtop.c
   interface.c
+  interface_v2.c
   interface_layout_selection.c
   interface_options.c
   interface_setup_win.c

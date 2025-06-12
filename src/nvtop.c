@@ -22,6 +22,7 @@
 #include "nvtop/extract_gpuinfo.h"
 #include "nvtop/info_messages.h"
 #include "nvtop/interface.h"
+#include "nvtop/interface_v2.h"
 #include "nvtop/interface_common.h"
 #include "nvtop/interface_options.h"
 #include "nvtop/time.h"
@@ -68,7 +69,9 @@ static const char helpstring[] = "Available options:\n"
                                  "(default 30s, negative = always on screen)\n"
                                  "  -h --help         : Print help and exit\n"
                                  "  -s --snapshot     : Output the current gpu stats without ncurses"
-                                 "(useful for scripting)\n";
+                                 "(useful for scripting)\n"
+                                 "  -S --snapshot2    : Output snapshot v2"
+                                 "\n";
 
 static const char versionString[] = "nvtop version " NVTOP_VERSION_STRING;
 
@@ -86,10 +89,11 @@ static const struct option long_opts[] = {
     {.name = "no-processes", .has_arg = no_argument, .flag = NULL, .val = 'P'},
     {.name = "reverse-abs", .has_arg = no_argument, .flag = NULL, .val = 'r'},
     {.name = "snapshot", .has_arg = no_argument, .flag = NULL, .val = 's'},
+    {.name = "snapshot2", .has_arg = no_argument, .flag = NULL, .val = 'S'},
     {0, 0, 0, 0},
 };
 
-static const char opts[] = "hvd:c:CfE:pPris";
+static const char opts[] = "hvd:c:CfE:pPrisS";
 
 int main(int argc, char **argv) {
   (void)setlocale(LC_CTYPE, "");
@@ -107,6 +111,7 @@ int main(int argc, char **argv) {
   bool show_snapshot = false;
   double encode_decode_hide_time = -1.;
   char *custom_config_file_path = NULL;
+  bool show_snapshot_v2 = false;
   while (true) {
     int optchar = getopt_long(argc, argv, opts, long_opts, NULL);
     if (optchar == -1)
@@ -168,6 +173,9 @@ int main(int argc, char **argv) {
     case 's':
       show_snapshot = true;
       break;
+    case 'S':
+      show_snapshot_v2 = true;
+      break;
     case ':':
     case '?':
       switch (optopt) {
@@ -212,6 +220,12 @@ int main(int argc, char **argv) {
     return EXIT_FAILURE;
   if (allDevCount == 0) {
     fprintf(stdout, "No GPU to monitor.\n");
+    return EXIT_SUCCESS;
+  }
+
+  if (show_snapshot_v2) {
+    print_snapshot_v2(&monitoredGpus);
+    gpuinfo_shutdown_info_extraction(&monitoredGpus);
     return EXIT_SUCCESS;
   }
 

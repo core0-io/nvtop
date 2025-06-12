@@ -5,14 +5,23 @@ on:
   - pull_request
 
 jobs:
+  release:
+    runs-on: ubuntu-latest
+    if: github.ref_name == 'master' && github.event_name == 'push'
+    steps:
+      - name: Create release
+        run: gh release create latest --target master
   build:
     runs-on: ${{ matrix.os }}
+
+    if: always()
+    needs: [release]
 
     strategy:
       fail-fast: false
 
       matrix:
-        os: [ubuntu-latest, ubuntu-24.04, ubuntu-22.04]
+        os: [ubuntu-24.04, ubuntu-24.04-arm, macos-latest]
 
     env:
       BUILD_DIR: build
@@ -22,7 +31,8 @@ jobs:
     - uses: actions/checkout@v4
 
     - name: Install dependencies
-      run: sudo apt-get install -y libncurses5-dev libncursesw5-dev libdrm-dev libsystemd-dev
+      if: runner.os == 'Linux'
+      run: sudo apt-get update && sudo apt-get install -y libncurses5-dev libncursesw5-dev libdrm-dev libsystemd-dev
 
     - name: Configure CMake
       run: cmake -S . -B $BUILD_DIR
@@ -38,3 +48,9 @@ jobs:
       with:
         name: nvtop ${{ matrix.os }}
         path: ${{ env.BUILD_DIR }}/install
+
+    - name: Upload to release
+      if: steps.release.outcome == 'success'
+      run: |
+        mv "$PWD/build/install/usr/local/bin/nvtop" nvtop-${{matrix.os}}
+        gh release upload latest nvtop-${{matrix.os}} --clobber 
