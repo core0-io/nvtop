@@ -53,7 +53,7 @@ jobs:
         path: ${{ env.BUILD_DIR }}/install
 
     - name: Upload to release
-      if: steps.release.outcome == 'success'
+      if: needs.release.result == 'success'
       env:
         GH_TOKEN: ${{ github.token }}
       run: |
