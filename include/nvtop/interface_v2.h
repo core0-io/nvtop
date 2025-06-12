@@ -28,4 +28,4 @@
 
 void print_snapshot_v2(struct list_head *devices);
 
-#endif // INTERFACE_H_
+#endif // INTERFACE_V2_H_
