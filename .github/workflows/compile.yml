@@ -10,6 +10,8 @@ jobs:
     if: github.ref_name == 'master' && github.event_name == 'push'
     steps:
       - name: Create release
+        env:
+          GH_TOKEN: ${{ github.token }}
         run: gh release create latest --target master
   build:
     runs-on: ${{ matrix.os }}
@@ -51,6 +53,8 @@ jobs:
 
     - name: Upload to release
       if: steps.release.outcome == 'success'
+      env:
+        GH_TOKEN: ${{ github.token }}
       run: |
         mv "$PWD/build/install/usr/local/bin/nvtop" nvtop-${{matrix.os}}
         gh release upload latest nvtop-${{matrix.os}} --clobber 

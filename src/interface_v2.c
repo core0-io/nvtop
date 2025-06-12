@@ -54,12 +54,12 @@ void print_snapshot_v2(struct list_head *devices) {
 
     const char *device_name_field = "device_name";
     const char *pdev_field = "pdev"; // e.g. 0000:01:00.0
+    const char *integrated_graphics_field = "integrated_graphics";
     const char *gpu_clock_field = "gpu_clock";
     const char *mem_clock_field = "mem_clock";
     const char *temp_field = "temp";
     const char *fan_field = "fan_speed"; // RPM
     const char *fan_field_pct = "fan_speed_percentage";
-    const char *cpu_fan_field = "cpu_fan";
     const char *power_field = "power_draw"; // mW
     const char *gpu_util_field = "gpu_util";
     const char *mem_util_field = "mem_util";
@@ -80,6 +80,11 @@ void print_snapshot_v2(struct list_head *devices) {
     // PDev
     if (strlen(device->pdev) > 0) {
       printf("%s\"%s\": \"%s\",\n", indent_level_four, pdev_field, device->pdev);
+    }
+
+    // Integrated graphics check,p new
+    if (device->static_info.integrated_graphics) {
+      printf("%s\"%s\": true,\n", indent_level_four, integrated_graphics_field);
     }
 
     // GPU Clock Speed
@@ -105,9 +110,6 @@ void print_snapshot_v2(struct list_head *devices) {
     if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, fan_rpm)) {
       printf("%s\"%s\": %u,\n", indent_level_four, fan_field,
              device->dynamic_info.fan_rpm > 9999 ? 9999 : device->dynamic_info.fan_rpm);
-    }
-    if (device->static_info.integrated_graphics) {
-      printf("%s\"%s\": true,\n", indent_level_four, cpu_fan_field);
     }
 
     // Memory used, new
