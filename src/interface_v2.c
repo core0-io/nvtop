@@ -136,7 +136,7 @@ void print_snapshot_v2(struct list_head *devices) {
     if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, power_draw)) {
       printf("%s\"%s\": %u,\n", indent_level_four, power_field, device->dynamic_info.power_draw / 1000);
       if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, power_draw_max)) {
-        printf("%s\"%s\": %u,\n", indent_level_four, power_util_field, (device->dynamic_info.power_draw / device->dynamic_info.power_draw_max) * 100);
+        printf("%s\"%s\": %u,\n", indent_level_four, power_util_field, (device->dynamic_info.power_draw * 100) / device->dynamic_info.power_draw_max);
       }
     }
 
