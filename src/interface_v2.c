@@ -60,6 +60,7 @@ void print_snapshot_v2(struct list_head *devices) {
     const char *fan_field = "fan_speed"; // RPM
     const char *fan_field_pct = "fan_speed_percentage";
     const char *power_field = "power_draw"; // mW
+    const char *power_util_field = "power_util";
     const char *gpu_util_field = "gpu_util";
     const char *mem_util_field = "mem_util";
     const char *mem_used_field = "mem_used";
@@ -134,6 +135,9 @@ void print_snapshot_v2(struct list_head *devices) {
     // Power draw
     if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, power_draw)) {
       printf("%s\"%s\": %u,\n", indent_level_four, power_field, device->dynamic_info.power_draw / 1000);
+      if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, power_draw_max)) {
+        printf("%s\"%s\": %u,\n", indent_level_four, power_util_field, (device->dynamic_info.power_draw / device->dynamic_info.power_draw_max) * 100);
+      }
     }
 
     // GPU Utilization
