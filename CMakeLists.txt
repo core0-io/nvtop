@@ -41,13 +41,18 @@ set_property(TARGET ncurses PROPERTY
   INTERFACE_LINK_LIBRARIES ${CURSES_LIBRARIES})
 add_compile_definitions(NCURSES_ENABLE_STDBOOL_H=1)
 
+find_package(Libdrm REQUIRED)
+find_package(Libsystemd REQUIRED)
+target_link_libraries(nvtop
+  PRIVATE
+  Libdrm::drm
+  Libsystemd::Libsystemd
+  ncurses)
+
+
 #///////////////////////////////////////////////////////////////////#
 #                        COMPILATION OPTIONS                        #
 #///////////////////////////////////////////////////////////////////#
-
-set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
-set(BUILD_SHARED_LIBS OFF)
-set(CMAKE_EXE_LINKER_FLAGS "-static")
 
 # Use full RPATH on build tree
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
