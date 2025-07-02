@@ -45,6 +45,10 @@ add_compile_definitions(NCURSES_ENABLE_STDBOOL_H=1)
 #                        COMPILATION OPTIONS                        #
 #///////////////////////////////////////////////////////////////////#
 
+set(CMAKE_FIND_LIBRARY_SUFFIXES ".a")
+set(BUILD_SHARED_LIBS OFF)
+set(CMAKE_EXE_LINKER_FLAGS "-static")
+
 # Use full RPATH on build tree
 set(CMAKE_SKIP_BUILD_RPATH FALSE)
 # Do not build with install RPATH
