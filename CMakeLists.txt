@@ -24,6 +24,9 @@ set(CMAKE_EXPORT_COMPILE_COMMANDS ON)
 
 list(APPEND CMAKE_MODULE_PATH ${CMAKE_CURRENT_SOURCE_DIR}/cmake/modules ${CMAKE_CURRENT_SOURCE_DIR}/cmake)
 
+# Prefer static libraries over shared libraries
+set(CMAKE_FIND_LIBRARY_SUFFIXES .a .so)
+
 set(CURSES_NEED_NCURSES TRUE)
 # Try to find ncurses with unicode support first
 set(CURSES_NEED_WIDE TRUE)
@@ -34,21 +37,96 @@ if (NOT CURSE_FOUND)
   find_package(Curses REQUIRED)
 endif()
 
+# Find static versions of required libraries
+find_library(LIBDRM_STATIC
+  NAMES libdrm.a drm
+  PATHS /usr/lib /usr/lib64 /usr/local/lib /usr/local/lib64
+  HINTS ${CMAKE_INSTALL_PREFIX}/lib ${CMAKE_INSTALL_PREFIX}/lib64
+  PATH_SUFFIXES x86_64-linux-gnu i386-linux-gnu
+  NO_DEFAULT_PATH
+)
+
+if(NOT LIBDRM_STATIC)
+  find_library(LIBDRM_STATIC
+    NAMES libdrm.a drm
+  )
+endif()
+
+find_library(LIBSYSTEMD_STATIC
+  NAMES libsystemd.a systemd
+  PATHS /usr/lib /usr/lib64 /usr/local/lib /usr/local/lib64
+  HINTS ${CMAKE_INSTALL_PREFIX}/lib ${CMAKE_INSTALL_PREFIX}/lib64
+  PATH_SUFFIXES x86_64-linux-gnu i386-linux-gnu
+  NO_DEFAULT_PATH
+)
+
+if(NOT LIBSYSTEMD_STATIC)
+  find_library(LIBSYSTEMD_STATIC
+    NAMES libsystemd.a systemd
+  )
+endif()
+
+# Find static ncurses library
+find_library(LIBNCURSES_STATIC
+  NAMES libncurses.a libncursesw.a ncurses ncursesw
+  PATHS /usr/lib /usr/lib64 /usr/local/lib /usr/local/lib64
+  HINTS ${CMAKE_INSTALL_PREFIX}/lib ${CMAKE_INSTALL_PREFIX}/lib64
+  PATH_SUFFIXES x86_64-linux-gnu i386-linux-gnu
+  NO_DEFAULT_PATH
+)
+
+if(NOT LIBNCURSES_STATIC)
+  find_library(LIBNCURSES_STATIC
+    NAMES libncurses.a libncursesw.a ncurses ncursesw
+  )
+endif()
+
+# Create static library targets
 add_library(ncurses INTERFACE IMPORTED)
 set_property(TARGET ncurses PROPERTY
   INTERFACE_INCLUDE_DIRECTORIES ${CURSES_INCLUDE_DIRS})
-set_property(TARGET ncurses PROPERTY
-  INTERFACE_LINK_LIBRARIES ${CURSES_LIBRARIES})
+
+if(LIBNCURSES_STATIC)
+  message(STATUS "Using static ncurses library: ${LIBNCURSES_STATIC}")
+  set_property(TARGET ncurses PROPERTY
+    INTERFACE_LINK_LIBRARIES ${LIBNCURSES_STATIC})
+else()
+  message(WARNING "Static ncurses library not found, falling back to dynamic linking")
+  set_property(TARGET ncurses PROPERTY
+    INTERFACE_LINK_LIBRARIES ${CURSES_LIBRARIES})
+endif()
+
+if(LIBDRM_STATIC)
+  message(STATUS "Using static libdrm: ${LIBDRM_STATIC}")
+  add_library(drm_static INTERFACE IMPORTED)
+  set_property(TARGET drm_static PROPERTY
+    INTERFACE_LINK_LIBRARIES ${LIBDRM_STATIC})
+else()
+  message(WARNING "Static libdrm not found")
+endif()
+
+if(LIBSYSTEMD_STATIC)
+  message(STATUS "Using static libsystemd: ${LIBSYSTEMD_STATIC}")
+  add_library(systemd_static INTERFACE IMPORTED)
+  set_property(TARGET systemd_static PROPERTY
+    INTERFACE_LINK_LIBRARIES ${LIBSYSTEMD_STATIC})
+  # libsystemd often requires additional dependencies when statically linked
+  find_library(LIBLZMA NAMES lzma)
+  find_library(LIBLZ4 NAMES lz4)
+  find_library(LIBZSTD NAMES zstd)
+  find_library(LIBCAP NAMES cap)
+  if(LIBLZMA)
+    set_property(TARGET systemd_static PROPERTY
+      INTERFACE_LINK_LIBRARIES ${LIBSYSTEMD_STATIC} ${LIBLZMA} ${LIBLZ4} ${LIBZSTD} ${LIBCAP})
+  endif()
+else()
+  message(WARNING "Static libsystemd not found")
+endif()
+
 add_compile_definitions(NCURSES_ENABLE_STDBOOL_H=1)
 
-find_package(Libdrm REQUIRED)
-find_package(Libsystemd REQUIRED)
-target_link_libraries(nvtop
-  PRIVATE
-  Libdrm::drm
-  Libsystemd::Libsystemd
-  ncurses)
-
+# Force static linking for the final executable
+set(CMAKE_EXE_LINKER_FLAGS "${CMAKE_EXE_LINKER_FLAGS} -static-libgcc -static-libstdc++")
 
 #///////////////////////////////////////////////////////////////////#
 #                        COMPILATION OPTIONS                        #
