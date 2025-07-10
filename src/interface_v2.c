@@ -42,15 +42,23 @@
 #include <tgmath.h>
 #include <unistd.h>
 
+static const char *PROCESS_TYPE_STRING[] = {"unknown", "graphical", "compute", "graphical_compute", "type_count"};
+
 void print_snapshot_v2(struct list_head *devices) {
   gpuinfo_populate_static_infos(devices);
   gpuinfo_refresh_dynamic_info(devices);
+  gpuinfo_refresh_processes(devices);
+  // sleep(2);
+  // gpuinfo_refresh_processes(devices);
   struct gpu_info *device;
+  struct gpu_process *process;
 
   printf("[\n");
   list_for_each_entry(device, devices, list) {
     const char *indent_level_two = "  ";
     const char *indent_level_four = "   ";
+    const char *indent_level_six = "     ";
+    const char *indent_level_eight = "       ";
 
     const char *device_name_field = "device_name";
     const char *pdev_field = "pdev"; // e.g. 0000:01:00.0
@@ -136,7 +144,8 @@ void print_snapshot_v2(struct list_head *devices) {
     if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, power_draw)) {
       printf("%s\"%s\": %u,\n", indent_level_four, power_field, device->dynamic_info.power_draw / 1000);
       if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, power_draw_max)) {
-        printf("%s\"%s\": %u,\n", indent_level_four, power_util_field, (device->dynamic_info.power_draw * 100) / device->dynamic_info.power_draw_max);
+        printf("%s\"%s\": %u,\n", indent_level_four, power_util_field,
+               (device->dynamic_info.power_draw * 100) / device->dynamic_info.power_draw_max);
       }
     }
 
@@ -146,10 +155,74 @@ void print_snapshot_v2(struct list_head *devices) {
     }
     // Memory Utilization
     if (GPUINFO_DYNAMIC_FIELD_VALID(&device->dynamic_info, mem_util_rate)) {
-      printf("%s\"%s\": %u\n", indent_level_four, mem_util_field, device->dynamic_info.mem_util_rate);
-    } else {
-      printf("%s\"%s\": null\n", indent_level_four, mem_util_field); // avoid trailing comma
+      printf("%s\"%s\": %u,\n", indent_level_four, mem_util_field, device->dynamic_info.mem_util_rate);
     }
+
+    printf("%s\"processes\": [\n", indent_level_four);
+    // sizeof(&device->processes) / sizeof(struct gpu_process)
+    size_t i = 0;
+    while (i < device->processes_count) {
+      printf("%s{\n", indent_level_six);
+      process = &device->processes[i];
+
+      // TODO include fields?
+      //  ---cmdline
+      //  ---user_name
+      //  gfx_engine_used
+      //  compute_engine_used
+      //  enc_engine_used
+      //  dec_engine_used
+      //  ---gpu_usage
+      //  encode_usage
+      //  decode_usage
+      //  ---gpu_memory_usage
+      //  ---gpu_memory_percentage
+      //  cpu_usage
+      //  cpu_memory_virt
+      //  cpu_memory_res
+      //  ---gpu_cycles
+      //  sample_delta
+      //  Maybe also:
+      //  gpu_process_type (strin)
+
+      if (GPUINFO_PROCESS_FIELD_VALID(process, cmdline)) {
+        // TODO escape quotes in cmdline
+        //  printf("%s\"cmd\": \"%s\",\n", indent_level_eight, process->cmdline);
+      }
+
+      if (GPUINFO_PROCESS_FIELD_VALID(process, user_name)) {
+        printf("%s\"username\": \"%s\",\n", indent_level_eight, process->user_name);
+      }
+
+      if (GPUINFO_PROCESS_FIELD_VALID(process, gpu_usage)) {
+        printf("%s\"gpu_usage\": %llu,\n", indent_level_eight, process->gpu_memory_usage);
+      }
+
+      if (GPUINFO_PROCESS_FIELD_VALID(process, gpu_memory_usage)) {
+        printf("%s\"gpu_mem_usage\": %llu,\n", indent_level_eight, process->gpu_memory_usage);
+      }
+
+      if (GPUINFO_PROCESS_FIELD_VALID(process, gpu_memory_percentage)) {
+        printf("%s\"gpu_mem_util\": %u,\n", indent_level_eight, process->gpu_memory_percentage);
+      }
+
+      if (GPUINFO_PROCESS_FIELD_VALID(process, gpu_cycles)) {
+        printf("%s\"gpu_cycles\": %llu,\n", indent_level_eight, process->gpu_cycles);
+      }
+
+      printf("%s\"process_type\": %s,\n", indent_level_eight, PROCESS_TYPE_STRING[process->type]); // useless?
+      printf("%s\"pid\": \"%u\"\n", indent_level_eight, process->pid);
+
+      printf("%s}", indent_level_six);
+
+      if (++i < device->processes_count) {
+        printf(",\n");
+      } else {
+        printf("\n");
+      }
+    }
+
+    printf("%s]\n", indent_level_four);
 
     if (device->list.next == devices)
       printf("%s}\n", indent_level_two);
