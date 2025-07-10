@@ -44,6 +44,16 @@
 
 static const char *PROCESS_TYPE_STRING[] = {"unknown", "graphical", "compute", "graphical_compute", "type_count"};
 
+void print_escaped_string(char *s) {
+    while (*s) {
+        unsigned cp = (unsigned char)*s++;
+        if (cp == 34 || cp == 92) {
+            putchar(92);
+        }
+        putchar(cp);
+    }
+}
+
 void print_snapshot_v2(struct list_head *devices) {
   gpuinfo_populate_static_infos(devices);
   gpuinfo_refresh_dynamic_info(devices);
@@ -186,8 +196,9 @@ void print_snapshot_v2(struct list_head *devices) {
       //  gpu_process_type (strin)
 
       if (GPUINFO_PROCESS_FIELD_VALID(process, cmdline)) {
-        // TODO escape quotes in cmdline
-        //  printf("%s\"cmd\": \"%s\",\n", indent_level_eight, process->cmdline);
+         printf("%s\"cmd\": \"", indent_level_eight);
+         print_escaped_string(process->cmdline);
+         printf("\",\n");
       }
 
       if (GPUINFO_PROCESS_FIELD_VALID(process, user_name)) {
@@ -210,7 +221,7 @@ void print_snapshot_v2(struct list_head *devices) {
         printf("%s\"gpu_cycles\": %llu,\n", indent_level_eight, process->gpu_cycles);
       }
 
-      printf("%s\"process_type\": %s,\n", indent_level_eight, PROCESS_TYPE_STRING[process->type]); // useless?
+      printf("%s\"process_type\": \"%s\",\n", indent_level_eight, PROCESS_TYPE_STRING[process->type]); // useless?
       printf("%s\"pid\": \"%u\"\n", indent_level_eight, process->pid);
 
       printf("%s}", indent_level_six);
