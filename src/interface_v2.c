@@ -175,25 +175,18 @@ void print_snapshot_v2(struct list_head *devices) {
       printf("%s{\n", indent_level_six);
       process = &device->processes[i];
 
-      // TODO include fields?
-      //  ---cmdline
-      //  ---user_name
+      // Currently ignored fields:
+      // Time-based fields:
       //  gfx_engine_used
       //  compute_engine_used
       //  enc_engine_used
       //  dec_engine_used
-      //  ---gpu_usage
-      //  encode_usage
-      //  decode_usage
-      //  ---gpu_memory_usage
-      //  ---gpu_memory_percentage
+      // CPU fields:
       //  cpu_usage
       //  cpu_memory_virt
       //  cpu_memory_res
-      //  ---gpu_cycles
+      // Meta field:
       //  sample_delta
-      //  Maybe also:
-      //  gpu_process_type (strin)
 
       if (GPUINFO_PROCESS_FIELD_VALID(process, cmdline)) {
          printf("%s\"cmd\": \"", indent_level_eight);
@@ -206,7 +199,7 @@ void print_snapshot_v2(struct list_head *devices) {
       }
 
       if (GPUINFO_PROCESS_FIELD_VALID(process, gpu_usage)) {
-        printf("%s\"gpu_usage\": %llu,\n", indent_level_eight, process->gpu_memory_usage);
+        printf("%s\"gpu_util\": %llu,\n", indent_level_eight, process->gpu_usage);
       }
 
       if (GPUINFO_PROCESS_FIELD_VALID(process, gpu_memory_usage)) {
@@ -219,6 +212,14 @@ void print_snapshot_v2(struct list_head *devices) {
 
       if (GPUINFO_PROCESS_FIELD_VALID(process, gpu_cycles)) {
         printf("%s\"gpu_cycles\": %llu,\n", indent_level_eight, process->gpu_cycles);
+      }
+
+      if (GPUINFO_PROCESS_FIELD_VALID(process, encode_usage)) {
+        printf("%s\"gpu_encode_util\": %llu,\n", indent_level_eight, process->encode_usage);
+      }
+
+      if (GPUINFO_PROCESS_FIELD_VALID(process, decode_usage)) {
+        printf("%s\"gpu_decode_util\": %llu,\n", indent_level_eight, process->decode_usage);
       }
 
       printf("%s\"process_type\": \"%s\",\n", indent_level_eight, PROCESS_TYPE_STRING[process->type]); // useless?
