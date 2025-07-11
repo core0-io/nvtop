@@ -199,15 +199,15 @@ void print_snapshot_v2(struct list_head *devices) {
       }
 
       if (GPUINFO_PROCESS_FIELD_VALID(process, gpu_usage)) {
-        printf("%s\"gpu_util\": %llu,\n", indent_level_eight, process->gpu_usage);
+        printf("%s\"%s\": %llu,\n", indent_level_eight, gpu_util_field, process->gpu_usage); //
       }
 
       if (GPUINFO_PROCESS_FIELD_VALID(process, gpu_memory_usage)) {
-        printf("%s\"gpu_mem_usage\": %llu,\n", indent_level_eight, process->gpu_memory_usage);
+        printf("%s\"%s\": %llu,\n", indent_level_eight, mem_used_field, process->gpu_memory_usage);
       }
 
       if (GPUINFO_PROCESS_FIELD_VALID(process, gpu_memory_percentage)) {
-        printf("%s\"gpu_mem_util\": %u,\n", indent_level_eight, process->gpu_memory_percentage);
+        printf("%s\"%s\": %u,\n", indent_level_eight, mem_util_field, process->gpu_memory_percentage);
       }
 
       if (GPUINFO_PROCESS_FIELD_VALID(process, gpu_cycles)) {
@@ -215,11 +215,11 @@ void print_snapshot_v2(struct list_head *devices) {
       }
 
       if (GPUINFO_PROCESS_FIELD_VALID(process, encode_usage)) {
-        printf("%s\"gpu_encode_util\": %llu,\n", indent_level_eight, process->encode_usage);
+        printf("%s\"%s\": %llu,\n", indent_level_eight, encoder_util_field, process->encode_usage);
       }
 
       if (GPUINFO_PROCESS_FIELD_VALID(process, decode_usage)) {
-        printf("%s\"gpu_decode_util\": %llu,\n", indent_level_eight, process->decode_usage);
+        printf("%s\"%s\": %llu,\n", indent_level_eight, decoder_util_field, process->decode_usage);
       }
 
       printf("%s\"process_type\": \"%s\",\n", indent_level_eight, PROCESS_TYPE_STRING[process->type]); // useless?
