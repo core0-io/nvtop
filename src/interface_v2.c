@@ -58,8 +58,6 @@ void print_snapshot_v2(struct list_head *devices) {
   gpuinfo_populate_static_infos(devices);
   gpuinfo_refresh_dynamic_info(devices);
   gpuinfo_refresh_processes(devices);
-  // sleep(2);
-  // gpuinfo_refresh_processes(devices);
   struct gpu_info *device;
   struct gpu_process *process;
 
@@ -222,7 +220,7 @@ void print_snapshot_v2(struct list_head *devices) {
         printf("%s\"%s\": %llu,\n", indent_level_eight, decoder_util_field, process->decode_usage);
       }
 
-      printf("%s\"process_type\": \"%s\",\n", indent_level_eight, PROCESS_TYPE_STRING[process->type]); // useless?
+      printf("%s\"process_type\": \"%s\",\n", indent_level_eight, PROCESS_TYPE_STRING[process->type]);
       printf("%s\"pid\": \"%u\"\n", indent_level_eight, process->pid);
 
       printf("%s}", indent_level_six);
